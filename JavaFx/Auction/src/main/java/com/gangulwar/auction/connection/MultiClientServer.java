@@ -1,5 +1,7 @@
 package com.gangulwar.auction.connection;
 
+import com.gangulwar.auction.controllers.BiddingDetailsWindowController;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -14,7 +16,9 @@ public class MultiClientServer {
     private static final int PORT = 12345;
     private static Map<Socket, User> connectedClients = new HashMap<>();
 
-    public static void StartServer(){
+    public static Map.Entry<String, Integer> HIGHEST_BID_USER = Map.entry("username", 0);
+    public static BiddingDetailsWindowController biddingDetailsController;
+    public static void StartServer() {
         try {
             ServerSocket serverSocket = new ServerSocket(PORT);
             System.out.println("Server started. Waiting for clients...");
@@ -35,7 +39,7 @@ public class MultiClientServer {
 
             writer.println("Enter your username:");
             String username = reader.readLine();
-            connectedClients.put(clientSocket, new User(username,"0",0));
+            connectedClients.put(clientSocket, new User(username, "0", 0));
 
             broadcast("User '" + username + "' has joined.");
 
@@ -47,11 +51,22 @@ public class MultiClientServer {
 
     private static void handleClientInteraction(Socket clientSocket, BufferedReader reader, PrintWriter writer) {
         try {
+            User clientObject = connectedClients.get(clientSocket);
+
             String message;
             while ((message = reader.readLine()) != null) {
-                connectedClients.get(clientSocket).currentBid=message;
-                broadcast(connectedClients.get(clientSocket).username + ": " + message);
+                clientObject.currentBid = message;
+                int bidValue = Integer.parseInt(message);
+                if (bidValue > HIGHEST_BID_USER.getValue()) {
+                    HIGHEST_BID_USER = Map.entry(clientObject.username, bidValue);
+                    System.out.println("HIGHEST BID : " + HIGHEST_BID_USER.getValue() + " BY :" + HIGHEST_BID_USER.getKey());
+                    if (biddingDetailsController != null) {
+                        biddingDetailsController.updateBid("Team Name:" + HIGHEST_BID_USER.getKey() + "\nBid: " + HIGHEST_BID_USER.getValue());
+                    }
+                }
+                broadcast(clientObject.username + ": " + message);
             }
+
         } catch (IOException e) {
             String disconnectedUsername = connectedClients.get(clientSocket).username;
             connectedClients.remove(clientSocket);

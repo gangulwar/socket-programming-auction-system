@@ -6,5 +6,6 @@
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gangulwar.auction.controllers.StartingController">
    <children>
       <Button fx:id="startServerButton" layoutX="252.0" layoutY="28.0" mnemonicParsing="false" onAction="#startServer" text="Start the server" />
+      <Button fx:id="biddingDetailsButton" layoutX="258.0" layoutY="187.0" mnemonicParsing="false" onAction="#getBiddingDetailsWindow" text="Start Bidding" />
    </children>
 </AnchorPane>

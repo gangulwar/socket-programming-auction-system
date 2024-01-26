@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gangulwar.auction.controllers.BiddingDetailsWindowController">
+   <children>
+      <TextField alignment="TOP_CENTER" editable="false" layoutX="175.0" layoutY="14.0" prefHeight="50.0" prefWidth="250.0" text="Current Highest Bid">
+         <font>
+            <Font name="System Bold" size="23.0" />
+         </font>
+      </TextField>
+      <TextArea fx:id="bidDetailsTextBox" layoutX="200.0" layoutY="80.0" prefHeight="50.0" prefWidth="199.0" text="Team Name:&#10;Bid:" />
+   </children>
+</AnchorPane>

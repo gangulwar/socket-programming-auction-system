@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -32,11 +33,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.*
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -95,7 +98,7 @@ fun HomeScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun MainHomeScreen(
     navController: NavController
@@ -187,6 +190,7 @@ fun MainHomeScreen(
                     )
 
                     val interactionSource = remember { MutableInteractionSource() }
+                    val keyboardController = LocalSoftwareKeyboardController.current
 
                     TextField(
                         modifier = Modifier
@@ -218,7 +222,17 @@ fun MainHomeScreen(
                         ),
                         shape = RoundedCornerShape(15.dp),
                         keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Number
+                            keyboardType =
+                            if (isIpEntered) {
+                                KeyboardType.Text
+                            } else {
+                                KeyboardType.Decimal
+                            }
+
+                        ),keyboardActions = KeyboardActions(
+                            onDone = {
+                                keyboardController?.hide()
+                            }
                         )
                     )
 
@@ -229,6 +243,7 @@ fun MainHomeScreen(
                             .padding(top = 10.dp, bottom = 10.dp),
                         onClick = {
                             if (isIpEntered) {
+                                keyboardController?.hide()
                                 scope.launch {
                                     GlobalConstants.USER_NAME = enterTeamName
                                     try {
@@ -258,6 +273,7 @@ fun MainHomeScreen(
                                     }
                                 }
                             } else {
+                                keyboardController?.hide()
                                 GlobalConstants.SERVER_IP = ipAddress
                                 isIpEntered = true
                             }

@@ -72,14 +72,14 @@ class Client(serverIP: String, username: String) {
                         GlobalConstants.CURRENT_WINNER = Pair(teamName, bidValue)
                         if (GlobalConstants.USER_NAME==teamName){
                             GlobalConstants.POINTS -= bidValue.toIntOrNull() ?: 0
+                            GlobalScope.launch {
+                                delay(1000)
+                            }
                         }
                         println("Team Name: $teamName")
                         println("Bid Value: $bidValue")
 
-                        GlobalScope.launch {
-                            delay(1000) // Adjust the duration as needed
-                            // Code to be executed after the delay
-                        }
+
                     } else {
                         println("Pattern not found in the string.")
                     }

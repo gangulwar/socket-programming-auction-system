@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -37,10 +38,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -116,12 +120,12 @@ fun MainBiddingScreen(
     val temp by rememberUpdatedState(GlobalConstants.CURRENT_WINNER)
 
     LaunchedEffect(temp) {
-        if (lauchedForFirstTime!=0){
+        if (lauchedForFirstTime != 0) {
             displayWinner = true
             delay(2500)
             displayWinner = false
         }
-        lauchedForFirstTime=1
+        lauchedForFirstTime = 1
     }
 
     Surface(
@@ -203,7 +207,7 @@ fun DisplayWinner() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun MainView() {
     val scope = rememberCoroutineScope()
@@ -313,7 +317,8 @@ fun MainView() {
                 var userBid by remember {
                     mutableStateOf("")
                 }
-
+                val keyboardController = LocalSoftwareKeyboardController.current
+                
                 TextField(
                     modifier = Modifier
                         .padding(
@@ -342,9 +347,12 @@ fun MainView() {
                     shape = RoundedCornerShape(15.dp),
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Number
+                    ), keyboardActions = KeyboardActions(
+                        onDone = {
+                            keyboardController?.hide()
+                        }
                     )
                 )
-
                 Button(
                     modifier = Modifier
                         .wrapContentWidth()

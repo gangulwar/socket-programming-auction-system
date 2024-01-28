@@ -6,6 +6,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.gangulwar.auction.BiddingScreen
 import com.gangulwar.auction.HomeScreen
+import com.gangulwar.auction.MainBiddingScreen
+import com.gangulwar.auction.MainHomeScreen
 
 @Composable
 fun RootNavGraph(
@@ -18,10 +20,10 @@ fun RootNavGraph(
         startDestination = Screens.Home.route
     ) {
         composable(route =Screens.Home.route){
-            HomeScreen(navController)
+            MainHomeScreen(navController)
         }
         composable(route =Screens.Bid.route){
-            BiddingScreen(navController)
+            MainBiddingScreen(navController)
         }
 
     }

@@ -46,7 +46,8 @@ public class MultiClientServer {
 
             Platform.runLater(() -> {
                 System.out.println("User '" + username + "' has joined.");
-                broadcast(getUserPoints(username));
+                String message=getUserPoints(username);
+                broadcast(message);
             });
 
 
@@ -126,11 +127,11 @@ public class MultiClientServer {
 
         for (User user : teamDetails) {
             if (user.username.equals(username)) {
-                return username + ": " + user.points;
+                return "USER_CONNECTED "+username + ": " + user.points;
             }
         }
 
-        return username + ": NOT_FOUND";
+        return "USER_CONNECTED "+username + ": NOT_FOUND";
     }
 
     public static void startNewItemBid(String winnerDetails) {
@@ -147,6 +148,7 @@ public class MultiClientServer {
 
         HIGHEST_BID_USER = Map.entry("no highest bid", 0);
         broadcast("WINNER: " + winnerDetails);
+        System.out.println("WINNER: "+winnerDetails);
     }
 
 

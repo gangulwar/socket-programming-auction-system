@@ -1,7 +1,8 @@
 package com.gangulwar.auction
 
-object User{
-    var USER_NAME:String="Pooja"
-    var POINTS:String="23"
+object GlobalConstants{
+    var USER_NAME:String="team2"
+    var POINTS:Int=2
     var SERVER_IP:String=""
+    lateinit var CLIENT:Client
 }

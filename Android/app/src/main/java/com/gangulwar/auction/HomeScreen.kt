@@ -15,29 +15,29 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.*
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -45,6 +45,9 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.gangulwar.auction.navigation.Screens
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -72,7 +75,7 @@ fun HomeScreen(
             )
             Button(onClick = {
                 navController.navigate(Screens.Bid.route)
-                User.SERVER_IP = address
+                GlobalConstants.SERVER_IP = address
             }) {
                 Text(text = "Connect")
             }
@@ -91,12 +94,14 @@ fun HomeScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainHomeScreen(
-
+    navController: NavController
 ) {
 
-    var teamName by remember {
-        mutableStateOf("")
+    var isIpEntered by remember {
+        mutableStateOf(false)
     }
+
+    val scope= rememberCoroutineScope()
 
     Surface(
         modifier = Modifier.fillMaxSize()
@@ -135,6 +140,9 @@ fun MainHomeScreen(
                     .height(10.dp)
                     .background(colorResource(id = R.color.theme_white))
             )
+            var ipAddress by remember {
+                mutableStateOf("")
+            }
 
             Card(
                 modifier = Modifier
@@ -156,7 +164,8 @@ fun MainHomeScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 10.dp),
-                        text = "Enter Team Name", style = TextStyle(
+                        text = if (isIpEntered) "Enter Team's Name" else "Enter IP address",
+                        style = TextStyle(
                             fontFamily = mincraftFont,
                             fontSize = 35.sp,
                             color = Color.White,
@@ -178,20 +187,67 @@ fun MainHomeScreen(
                                 color =
                                 if (interactionSource.collectIsFocusedAsState().value) {
                                     Color.Green
-                                } else colorResource(id = R.color.text_field_yellow), shape = RoundedCornerShape(15.dp)
+                                } else colorResource(id = R.color.text_field_yellow),
+                                shape = RoundedCornerShape(15.dp)
                             ),
-
-                        value = teamName,
+                        value = ipAddress,
                         onValueChange = {
-                            teamName = it
+                            ipAddress = it
                         },
                         colors = TextFieldDefaults.textFieldColors(
                             containerColor = colorResource(id = R.color.theme_white),
                             unfocusedIndicatorColor = Color.Transparent,
                             focusedIndicatorColor = Color.Transparent,
                         ),
-                        shape = RoundedCornerShape(15.dp)
+                        shape = RoundedCornerShape(15.dp),
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Number
+                        )
                     )
+
+                    Button(
+                        modifier = Modifier
+                            .wrapContentWidth()
+                            .align(Alignment.CenterHorizontally)
+                            .padding(top = 10.dp, bottom = 10.dp),
+                        onClick = {
+                            if (isIpEntered){
+                                scope.launch {
+                                    
+                                    try {
+                                        val initializedClient = withContext(Dispatchers.Default) {
+                                            Client(
+                                                GlobalConstants.SERVER_IP,
+                                                GlobalConstants.USER_NAME
+                                            )
+                                        }
+                                        GlobalConstants.CLIENT = initializedClient
+
+                                    }catch (e: Exception){
+
+                                    }
+                                }
+                            }else{
+                                GlobalConstants.SERVER_IP = ipAddress
+                                isIpEntered = true
+                            }
+
+//                            navController.navigate(Screens.Bid.route)
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(54, 190, 32)
+                        )
+                    ) {
+                        Text(
+                            modifier = Modifier,
+                            text = if (isIpEntered)"done" else "connect", style = TextStyle(
+                                fontFamily = mincraftFont,
+                                fontSize = 35.sp,
+                                color = Color.White,
+                                textAlign = TextAlign.Center
+                            )
+                        )
+                    }
                 }
             }
 
@@ -216,5 +272,5 @@ fun MainHomeScreen(
 @Composable
 fun HomeScreenPreview() {
 //    HomeScreen(rememberNavController())
-    MainHomeScreen()
+    MainHomeScreen(rememberNavController())
 }

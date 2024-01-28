@@ -31,10 +31,38 @@ class Client(serverIP: String, username: String) {
         try {
             var message: String?
             while (serverReader.readLine().also { message = it } != null) {
+                if (checkUserConnected(message)){
+                    val pattern = Regex(":\\s*(.*)")
+
+                    val matchResult = message?.let { pattern.find(it) }
+
+                    val value = matchResult?.groupValues?.get(1)
+                    if (value != null) {
+                        assignPoints(value)
+                    }
+                }else{
+                    GlobalConstants.USER_NAME="NOT_FOUND"
+                }
+
+
                 println(message)
+                println("User Point ${GlobalConstants.POINTS}")
             }
         } catch (e: IOException) {
             e.printStackTrace()
         }
+    }
+
+    fun checkUserConnected(message: String?):Boolean{
+        if (message?.contains("USER_CONNECTED") == true){
+            if (message.contains(GlobalConstants.USER_NAME)){
+                return true
+            }
+        }
+        return false
+    }
+
+    private fun assignPoints(points: String) {
+        GlobalConstants.POINTS=Integer.parseInt(points)
     }
 }

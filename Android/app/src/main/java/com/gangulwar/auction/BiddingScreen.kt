@@ -6,7 +6,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -46,6 +45,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -62,7 +62,7 @@ fun BiddingScreen(
     LaunchedEffect(Unit) {
         // Launch a coroutine to asynchronously initialize the client
         val initializedClient = withContext(Dispatchers.Default) {
-            Client(User.SERVER_IP, User.USER_NAME)
+            Client(GlobalConstants.SERVER_IP, GlobalConstants.USER_NAME)
         }
         client = initializedClient
     }
@@ -98,7 +98,19 @@ fun BiddingScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainBiddingScreen() {
+fun MainBiddingScreen(
+    navController: NavController
+) {
+    var client: Client? by remember { mutableStateOf(null) }
+    val scope = rememberCoroutineScope()
+
+    LaunchedEffect(Unit) {
+        val initializedClient = withContext(Dispatchers.Default) {
+            Client(GlobalConstants.SERVER_IP, GlobalConstants.USER_NAME)
+        }
+        client = initializedClient
+    }
+
     Surface(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -209,7 +221,7 @@ fun MainBiddingScreen() {
                     )
 
                     val source = remember { MutableInteractionSource() }
-                    var value by remember {
+                    var userBid by remember {
                         mutableStateOf("")
                     }
 
@@ -229,16 +241,19 @@ fun MainBiddingScreen() {
                                 shape = RoundedCornerShape(15.dp)
                             ),
 
-                        value = value,
+                        value = userBid,
                         onValueChange = {
-                            value = it
+                            userBid = it
                         },
                         colors = TextFieldDefaults.textFieldColors(
                             containerColor = colorResource(id = R.color.theme_white),
                             unfocusedIndicatorColor = Color.Transparent,
                             focusedIndicatorColor = Color.Transparent,
                         ),
-                        shape = RoundedCornerShape(15.dp)
+                        shape = RoundedCornerShape(15.dp),
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Number
+                        )
                     )
 
                     Button(
@@ -247,13 +262,14 @@ fun MainBiddingScreen() {
                             .align(Alignment.CenterHorizontally)
                             .padding(top = 10.dp, bottom = 10.dp),
                         onClick = {
-
+                            scope.launch {
+                                GlobalConstants.CLIENT.sendMessagetoServer(userBid)
+                            }
                         },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color(54, 190, 32)
-                        )
+                        ),
                     ) {
-
                         Text(
                             modifier = Modifier,
                             text = "bid now", style = TextStyle(
@@ -298,21 +314,24 @@ fun MainBiddingScreen() {
                     .wrapContentWidth()
                     .background(
                         colorResource(id = R.color.theme_white),
-                        shape = RoundedCornerShape(15.dp))
+                        shape = RoundedCornerShape(15.dp)
+                    )
                     .border(
                         width = 5.dp,
                         color =
                         colorResource(id = R.color.text_field_yellow),
                         shape = RoundedCornerShape(15.dp)
-                    ).padding(10.dp), contentAlignment = Alignment.Center,
+                    )
+                    .padding(10.dp),
+                contentAlignment = Alignment.Center,
             ) {
                 Text(
 //                    modifier = Modifier.fillMaxWidth(),
-                    text = "balance : ${User.POINTS}", style = TextStyle(
+                    text = "balance : ${GlobalConstants.POINTS}", style = TextStyle(
                         fontFamily = mincraftFont,
                         fontSize = 35.sp,
-                        color = Color(85,84,84),
-                    ),textAlign = TextAlign.Center
+                        color = Color(85, 84, 84),
+                    ), textAlign = TextAlign.Center
                 )
             }
         }
@@ -327,5 +346,5 @@ fun MainBiddingScreen() {
 @Composable
 fun BiddingScreenPreview() {
 //    BiddingScreen(rememberNavController())
-    MainBiddingScreen()
+    MainBiddingScreen(rememberNavController())
 }

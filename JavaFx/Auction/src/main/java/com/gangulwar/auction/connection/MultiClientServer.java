@@ -67,9 +67,11 @@ public class MultiClientServer {
                 int bidValue = Integer.parseInt(message);
                 if (bidValue > HIGHEST_BID_USER.getValue()) {
                     HIGHEST_BID_USER = Map.entry(clientObject.username, bidValue);
-                    System.out.println("HIGHEST BID : " + HIGHEST_BID_USER.getValue() + " BY :" + HIGHEST_BID_USER.getKey());
+                    String temp="HIGHEST_BID: " + HIGHEST_BID_USER.getValue() + " BY: " + HIGHEST_BID_USER.getKey();
+                    System.out.println(temp);
+                    broadcast(temp);
                     if (biddingDetailsController != null) {
-                        biddingDetailsController.updateBid("Team Name:" + HIGHEST_BID_USER.getKey() + "\nBid: " + HIGHEST_BID_USER.getValue());
+                        biddingDetailsController.updateBid("Team Name: " + HIGHEST_BID_USER.getKey() + " Bid: " + HIGHEST_BID_USER.getValue());
                     }
                 }
 

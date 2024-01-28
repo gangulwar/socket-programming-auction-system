@@ -1,6 +1,7 @@
 package com.gangulwar.auction
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -32,8 +33,10 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -46,6 +49,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.gangulwar.auction.navigation.Screens
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -101,7 +105,12 @@ fun MainHomeScreen(
         mutableStateOf(false)
     }
 
-    val scope= rememberCoroutineScope()
+    var displayError by remember {
+        mutableStateOf(false)
+    }
+    val context = LocalContext.current
+
+    val scope = rememberCoroutineScope()
 
     Surface(
         modifier = Modifier.fillMaxSize()
@@ -141,6 +150,10 @@ fun MainHomeScreen(
                     .background(colorResource(id = R.color.theme_white))
             )
             var ipAddress by remember {
+                mutableStateOf("")
+            }
+
+            var enterTeamName by remember {
                 mutableStateOf("")
             }
 
@@ -190,9 +203,13 @@ fun MainHomeScreen(
                                 } else colorResource(id = R.color.text_field_yellow),
                                 shape = RoundedCornerShape(15.dp)
                             ),
-                        value = ipAddress,
+                        value = if (isIpEntered) enterTeamName else ipAddress,
                         onValueChange = {
-                            ipAddress = it
+                            if (isIpEntered) {
+                                enterTeamName = it
+                            } else {
+                                ipAddress = it
+                            }
                         },
                         colors = TextFieldDefaults.textFieldColors(
                             containerColor = colorResource(id = R.color.theme_white),
@@ -211,9 +228,9 @@ fun MainHomeScreen(
                             .align(Alignment.CenterHorizontally)
                             .padding(top = 10.dp, bottom = 10.dp),
                         onClick = {
-                            if (isIpEntered){
+                            if (isIpEntered) {
                                 scope.launch {
-                                    
+                                    GlobalConstants.USER_NAME = enterTeamName
                                     try {
                                         val initializedClient = withContext(Dispatchers.Default) {
                                             Client(
@@ -222,12 +239,25 @@ fun MainHomeScreen(
                                             )
                                         }
                                         GlobalConstants.CLIENT = initializedClient
-
-                                    }catch (e: Exception){
-
+                                        delay(100)
+                                        if (GlobalConstants.POINTS == 231204) {
+                                            Toast.makeText(
+                                                context,
+                                                "Check Your Team Name Again!",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        } else {
+                                            navController.navigate(Screens.Bid.route)
+                                        }
+                                    } catch (e: Exception) {
+                                        Toast.makeText(
+                                            context,
+                                            "Check Your IP address!",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
                                     }
                                 }
-                            }else{
+                            } else {
                                 GlobalConstants.SERVER_IP = ipAddress
                                 isIpEntered = true
                             }
@@ -240,7 +270,7 @@ fun MainHomeScreen(
                     ) {
                         Text(
                             modifier = Modifier,
-                            text = if (isIpEntered)"done" else "connect", style = TextStyle(
+                            text = if (isIpEntered) "done" else "connect", style = TextStyle(
                                 fontFamily = mincraftFont,
                                 fontSize = 35.sp,
                                 color = Color.White,

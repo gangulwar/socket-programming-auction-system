@@ -1,13 +1,12 @@
 package com.gangulwar.auction.connection;
 
 import com.gangulwar.auction.controllers.BiddingDetailsWindowController;
+import javafx.application.Platform;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,10 +17,14 @@ public class MultiClientServer {
 
     public static Map.Entry<String, Integer> HIGHEST_BID_USER = Map.entry("username", 0);
     public static BiddingDetailsWindowController biddingDetailsController;
+    public static ArrayList<User> teamDetails = new ArrayList<>();
+
     public static void StartServer() {
         try {
             ServerSocket serverSocket = new ServerSocket(PORT);
             System.out.println("Server started. Waiting for clients...");
+
+            new Thread(MultiClientServer::getTeamDetails).start();
 
             while (true) {
                 Socket clientSocket = serverSocket.accept();
@@ -39,9 +42,13 @@ public class MultiClientServer {
 
             writer.println("Enter your username:");
             String username = reader.readLine();
-            connectedClients.put(clientSocket, new User(username, "0", 0));
+            connectedClients.put(clientSocket, new User(username, 0));
 
-            broadcast("User '" + username + "' has joined.");
+            Platform.runLater(() -> {
+                System.out.println("User '" + username + "' has joined.");
+                broadcast(getUserPoints(username));
+            });
+
 
             new Thread(() -> handleClientInteraction(clientSocket, reader, writer)).start();
         } catch (IOException e) {
@@ -55,7 +62,7 @@ public class MultiClientServer {
 
             String message;
             while ((message = reader.readLine()) != null) {
-                clientObject.currentBid = message;
+                clientObject.currentBid = Integer.parseInt(message);
                 int bidValue = Integer.parseInt(message);
                 if (bidValue > HIGHEST_BID_USER.getValue()) {
                     HIGHEST_BID_USER = Map.entry(clientObject.username, bidValue);
@@ -64,7 +71,12 @@ public class MultiClientServer {
                         biddingDetailsController.updateBid("Team Name:" + HIGHEST_BID_USER.getKey() + "\nBid: " + HIGHEST_BID_USER.getValue());
                     }
                 }
-                broadcast(clientObject.username + ": " + message);
+
+
+                System.out.println(clientObject.username + ": " + message);
+//              broadcast(clientObject.username + ": " + finalMessage);
+
+
             }
 
         } catch (IOException e) {
@@ -75,7 +87,7 @@ public class MultiClientServer {
     }
 
     private static void broadcast(String message) {
-        System.out.println(message);
+//        System.out.println(message);
         for (Socket clientSocket : connectedClients.keySet()) {
             try {
                 PrintWriter writer = new PrintWriter(clientSocket.getOutputStream(), true);
@@ -85,4 +97,57 @@ public class MultiClientServer {
             }
         }
     }
+
+    private static void getTeamDetails() {
+        String filePath = "src/main/java/com/gangulwar/auction/connection/teamDetails";
+
+        try (BufferedReader reader = new BufferedReader(
+                new FileReader(filePath))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split("\\s+");
+
+                teamDetails.add(
+                        new User(
+                                parts[0].trim(),
+                                Integer.parseInt(parts[1].trim())
+                        )
+                );
+
+            }
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static String getUserPoints(String username) {
+
+        for (User user : teamDetails) {
+            if (user.username.equals(username)) {
+                return username + ": " + user.points;
+            }
+        }
+
+        return username + ": NOT_FOUND";
+    }
+
+    public static void startNewItemBid(String winnerDetails) {
+        try (BufferedWriter writer = new BufferedWriter(
+                new FileWriter(
+                        "src/main/java/com/gangulwar/auction/connection/winningTeamDetails",
+                        true)
+        )) {
+            writer.write(winnerDetails);
+            writer.newLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        HIGHEST_BID_USER = Map.entry("no highest bid", 0);
+        broadcast("WINNER: " + winnerDetails);
+    }
+
+
 }

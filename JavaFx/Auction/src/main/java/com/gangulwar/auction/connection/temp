@@ -1,0 +1,47 @@
+import java.util.*;
+import java.lang.*;
+import java.io.*;
+
+class Codechef
+{
+	public static void main (String[] args) throws java.lang.Exception
+	{
+		       int i,j,k,n;
+        String s="NO";
+
+        String []over=new String[6];
+
+
+        Scanner sc = new Scanner(System.in);
+
+        n=sc.nextInt();
+        for(j=0;j<n;j++){
+             s="NO";
+        for(k=0;k<6;k++){
+            over[k]=sc.next();
+        }
+
+        for (i=0;i<6;i++){
+
+            if(Objects.equals(over[i], "W")){
+                if(i==4){
+                    break;
+                }
+                if(Objects.equals(over[i + 1], "W")){
+                    if(Objects.equals(over[i + 2], "W")){
+                        s="YES";
+
+
+                    }
+                }
+            }
+
+
+        }
+
+            System.out.println(s);
+
+        }
+    }
+
+	}

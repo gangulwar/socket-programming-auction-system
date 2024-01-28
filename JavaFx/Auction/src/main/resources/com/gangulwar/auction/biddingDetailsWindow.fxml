@@ -14,6 +14,6 @@
          </font>
       </TextField>
       <TextArea fx:id="bidDetailsTextBox" layoutX="200.0" layoutY="80.0" prefHeight="50.0" prefWidth="199.0" text="Team Name:&#10;Bid:" />
-      <Button fx:id="startNewBidButton" layoutX="504.0" layoutY="336.0" mnemonicParsing="false" text="Start new bid" onAction="#startNewBid" />
+      <Button fx:id="startNewBidButton" layoutX="504.0" layoutY="336.0" mnemonicParsing="false" onAction="#startNewBid" text="Start new bid" />
    </children>
 </AnchorPane>

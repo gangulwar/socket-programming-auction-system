@@ -1,20 +1,47 @@
 package com.gangulwar.auction
 
 import android.util.Log
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.*
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.gangulwar.auction.navigation.Screens
@@ -45,22 +72,141 @@ fun HomeScreen(
             )
             Button(onClick = {
                 navController.navigate(Screens.Bid.route)
-                User.SERVER_IP=address
+                User.SERVER_IP = address
             }) {
                 Text(text = "Connect")
             }
         }
     }
 
-    DisposableEffect(Unit){
+    DisposableEffect(Unit) {
         onDispose {
-            Log.d("Check","On Dispose Called")
+            Log.d("Check", "On Dispose Called")
 
         }
 
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MainHomeScreen(
+
+) {
+
+    var teamName by remember {
+        mutableStateOf("")
+    }
+
+    Surface(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.main_bg), contentDescription = null,
+            contentScale = ContentScale.FillBounds
+        )
+
+        Column(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+
+            Image(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 10.dp, bottom = 25.dp),
+                painter = painterResource(id = R.drawable.gdsc_logo),
+                contentDescription = null
+            )
+
+            Image(
+                modifier = Modifier
+                    .padding(
+                        start = 35.dp, end = 35.dp,
+                    )
+                    .fillMaxWidth(),
+                painter = painterResource(id = R.drawable.auction_text),
+                contentDescription = null
+            )
+
+            Spacer(
+                modifier = Modifier
+                    .padding(top = 15.dp, bottom = 10.dp)
+                    .fillMaxWidth()
+                    .height(10.dp)
+                    .background(colorResource(id = R.color.theme_white))
+            )
+
+            Card(
+                modifier = Modifier
+                    .padding(10.dp)
+                    .fillMaxWidth(), border = BorderStroke(
+                    width = 5.dp, colorResource(id = R.color.theme_white)
+                ),
+                colors = CardDefaults.outlinedCardColors(
+                    containerColor = Color.Transparent
+                )
+            ) {
+                Column(
+                    modifier = Modifier
+                        .padding(15.dp)
+                        .fillMaxWidth()
+                ) {
+
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 10.dp),
+                        text = "Enter Team Name", style = TextStyle(
+                            fontFamily = mincraftFont,
+                            fontSize = 35.sp,
+                            color = Color.White,
+                            textAlign = TextAlign.Center
+                        )
+                    )
+
+                    val interactionSource = remember { MutableInteractionSource() }
+
+                    TextField(
+                        modifier = Modifier
+                            .padding(
+                                top = 25.dp, start = 25.dp,
+                                end = 25.dp, bottom = 10.dp
+                            )
+                            .fillMaxWidth()
+                            .border(
+                                width = 5.dp,
+                                color =
+                                if (interactionSource.collectIsFocusedAsState().value) {
+                                    Color.Green
+                                } else colorResource(id = R.color.text_field_yellow), shape = RoundedCornerShape(15.dp)
+                            ),
+
+                        value = teamName,
+                        onValueChange = {
+                            teamName = it
+                        },
+                        colors = TextFieldDefaults.textFieldColors(
+                            containerColor = colorResource(id = R.color.theme_white),
+                            unfocusedIndicatorColor = Color.Transparent,
+                            focusedIndicatorColor = Color.Transparent,
+                        ),
+                        shape = RoundedCornerShape(15.dp)
+                    )
+                }
+            }
+
+            Image(
+                modifier = Modifier
+                    .padding(top = 25.dp)
+                    .fillMaxWidth()
+                    .fillMaxHeight(),
+                painter = painterResource(id = R.drawable.auction_illustration),
+                contentDescription = null,
+                contentScale = ContentScale.FillBounds
+            )
+        }
+    }
+}
 
 @Preview(
     showSystemUi = true,
@@ -69,5 +215,6 @@ fun HomeScreen(
 )
 @Composable
 fun HomeScreenPreview() {
-    HomeScreen(rememberNavController())
+//    HomeScreen(rememberNavController())
+    MainHomeScreen()
 }

@@ -148,6 +148,7 @@ public class MultiClientServer {
             e.printStackTrace();
         }
 
+
         HIGHEST_BID_USER = Map.entry("no highest bid", 0);
         broadcast("WINNER: " + winnerDetails);
         System.out.println("WINNER: "+winnerDetails);

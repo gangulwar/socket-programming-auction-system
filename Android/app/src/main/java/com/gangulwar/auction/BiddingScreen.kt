@@ -122,7 +122,7 @@ fun MainBiddingScreen(
     LaunchedEffect(temp) {
         if (lauchedForFirstTime != 0) {
             displayWinner = true
-            delay(2500)
+            delay(10000)
             displayWinner = false
         }
         lauchedForFirstTime = 1
@@ -318,7 +318,7 @@ fun MainView() {
                     mutableStateOf("")
                 }
                 val keyboardController = LocalSoftwareKeyboardController.current
-                
+
                 TextField(
                     modifier = Modifier
                         .padding(
@@ -350,6 +350,11 @@ fun MainView() {
                     ), keyboardActions = KeyboardActions(
                         onDone = {
                             keyboardController?.hide()
+                        }, onGo = {
+                            keyboardController?.hide()
+                        },
+                        onSend = {
+                            keyboardController?.hide()
                         }
                     )
                 )
@@ -360,14 +365,22 @@ fun MainView() {
                         .padding(top = 10.dp, bottom = 10.dp),
                     onClick = {
                         scope.launch {
-                            if (Integer.parseInt(userBid) > GlobalConstants.POINTS) {
+                            if (userBid.toIntOrNull() == null) {
                                 Toast.makeText(
                                     context,
-                                    "Your Bid Greater than your points",
+                                    "Enter a valid bid",
                                     Toast.LENGTH_SHORT
                                 ).show()
                             } else {
-                                GlobalConstants.CLIENT.sendMessagetoServer(userBid)
+                                if (Integer.parseInt(userBid) > GlobalConstants.POINTS) {
+                                    Toast.makeText(
+                                        context,
+                                        "Your Bid Greater than your points",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                } else {
+                                    GlobalConstants.CLIENT.sendMessagetoServer(userBid)
+                                }
                             }
                         }
                     },

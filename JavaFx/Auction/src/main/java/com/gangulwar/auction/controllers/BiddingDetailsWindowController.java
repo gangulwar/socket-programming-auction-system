@@ -12,12 +12,14 @@ public class BiddingDetailsWindowController {
 
     @FXML
     public Button startNewBidButton;
+
+
     public void updateBid(String newBid){
         bidDetailsTextBox.setText(newBid);
     }
 
     public void startNewBid(){
         MultiClientServer.startNewItemBid(bidDetailsTextBox.getText());
-        updateBid("New Bidding Started!!!");
+        updateBid("New Item Bidding Started!!!");
     }
 }

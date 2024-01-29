@@ -6,14 +6,24 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gangulwar.auction.controllers.BiddingDetailsWindowController">
+<AnchorPane styleClass="background" stylesheets="@../../../style.css" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gangulwar.auction.controllers.BiddingDetailsWindowController">
    <children>
-      <TextField alignment="TOP_CENTER" editable="false" layoutX="175.0" layoutY="14.0" prefHeight="50.0" prefWidth="250.0" text="Current Highest Bid">
+
+      <TextField alignment="TOP_CENTER" editable="false" layoutX="771.0" layoutY="145.0" maxHeight="111.0" maxWidth="334.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="51.0" prefWidth="334.0" styleClass="text-field" text="Current Highest Bid" AnchorPane.bottomAnchor="585.0" AnchorPane.leftAnchor="771.0" AnchorPane.rightAnchor="373.0" AnchorPane.topAnchor="145.0">
          <font>
-            <Font name="System Bold" size="23.0" />
+            <Font name="Agency FB Bold" size="30.0" />
          </font>
       </TextField>
-      <TextArea fx:id="bidDetailsTextBox" layoutX="200.0" layoutY="80.0" prefHeight="50.0" prefWidth="199.0" text="Team Name:&#10;Bid:" />
-      <Button fx:id="startNewBidButton" layoutX="504.0" layoutY="336.0" mnemonicParsing="false" onAction="#startNewBid" text="Start new bid" />
+
+      <TextArea fx:id="bidDetailsTextBox" layoutX="796.0" layoutY="260.0" maxHeight="102.0" maxWidth="335.0" minHeight="50.0" minWidth="199.0" prefHeight="102.0" prefWidth="335.0" style="-fx-background-color: green;" text="Team Name:&#10;Bid:" AnchorPane.bottomAnchor="426.0" AnchorPane.leftAnchor="796.0" AnchorPane.rightAnchor="352.0" AnchorPane.topAnchor="260.0">
+         <font>
+            <Font name="Agency FB" size="32.0" />
+         </font></TextArea>
+
+      <Button fx:id="startNewBidButton" layoutX="149.0" layoutY="334.0" maxHeight="259.0" maxWidth="661.0" minHeight="51.0" minWidth="207.0" mnemonicParsing="false" onAction="#startNewBid" prefHeight="51.0" prefWidth="220.0" text="Start new bid" AnchorPane.bottomAnchor="396.0" AnchorPane.leftAnchor="149.0" AnchorPane.rightAnchor="1109.0" AnchorPane.topAnchor="334.0">
+         <font>
+            <Font name="Agency FB" size="27.0" />
+         </font></Button>
+
    </children>
 </AnchorPane>

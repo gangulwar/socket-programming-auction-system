@@ -1,0 +1,39 @@
+.anchor-pane {
+    -fx-background-color: white;
+    -fx-background-insets: 0;
+}
+
+.anchor-pane > * {
+    -fx-translate-x: 50%;
+    -fx-translate-y: 50%;
+    -fx-alignment: center;
+}
+
+.background {
+    -fx-background-image: url("file:///C:/Users/Asus/Desktop/ui.jpg");
+    -fx-background-size: cover;
+    -fx-background-position: center;
+}
+
+
+.button {
+    -fx-background-color: #FF8000; /* Orange color */
+    -fx-background-radius: 20;    /* Rounded corner radius */
+    -fx-text-fill: white;         /* Text color */
+    -fx-border-color: black;      /* Border color */
+    -fx-border-width: 2;          /* Border width */
+    -fx-border-radius: 20;
+}
+
+.text-field {
+    -fx-background-color: #F0F0F0; /* Light gray background color */
+    -fx-background-radius: 5;      /* Rounded corner radius */
+    -fx-border-color: #A0A0A0;      /* Border color */
+    -fx-border-width: 1;            /* Border width */
+    -fx-prompt-text-fill: #A0A0A0;  /* Prompt text color */
+}
+
+.anotherTextField{
+-fx-background-color:#
+
+}

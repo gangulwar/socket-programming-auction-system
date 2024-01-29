@@ -44,11 +44,11 @@ public class StartingController {
     public void getBiddingDetailsWindow() throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("biddingDetailsWindow.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
-
         MultiClientServer.biddingDetailsController = fxmlLoader.getController();
         stage.setTitle("Bidding Details");
         stage.setScene(scene);
+        stage.setFullScreen(true);
         stage.show();
-
     }
+
 }

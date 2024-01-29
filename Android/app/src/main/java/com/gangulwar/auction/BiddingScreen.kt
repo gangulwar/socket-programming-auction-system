@@ -287,7 +287,7 @@ fun MainView() {
                             shape = RoundedCornerShape(15.dp)
                         ),
 
-                    value = GlobalConstants.HIGHEST_BID,
+                    value = addNewlineAfterNumber(),
                     onValueChange = {
 
                     },
@@ -351,6 +351,12 @@ fun MainView() {
                         onDone = {
                             keyboardController?.hide()
                         }, onGo = {
+                            keyboardController?.hide()
+                        }, onNext = {
+                            keyboardController?.hide()
+                        }, onPrevious = {
+                            keyboardController?.hide()
+                        }, onSearch = {
                             keyboardController?.hide()
                         },
                         onSend = {
@@ -453,6 +459,25 @@ fun MainView() {
             )
         }
     }
+}
+
+fun addNewlineAfterNumber(): String {
+    var input=GlobalConstants.HIGHEST_BID
+    val regex = Regex("\\d+")
+    if (input.contains("Bid:")){
+        val matchResult = regex.find(input)
+
+        return if (matchResult != null) {
+            val numericPart = matchResult.value
+            val index = input.indexOf(numericPart) + numericPart.length
+            input.substring(0, index).trim() + "\n" + input.substring(index).trimStart()
+        } else {
+            input
+        }
+    }else{
+         return input
+    }
+
 }
 
 @Preview(

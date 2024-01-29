@@ -38,4 +38,9 @@ class MainActivity : ComponentActivity() {
             RootNavGraph(navController = rememberNavController())
         }
     }
+
+    override fun onStop() {
+        lauchedForFirstTime=0
+        super.onStop()
+    }
 }

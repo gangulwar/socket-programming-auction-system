@@ -1,6 +1,6 @@
 <table>
     <tr>
-      <th>Conneting Screen</th>
+      <th>Connecting Screen</th>
       <th>Bidding Screen</th>
     </tr>
     <tr>
